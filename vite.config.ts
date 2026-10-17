@@ -17,7 +17,8 @@ function savePortraitPlugin() {
               const { image } = JSON.parse(body);
               if (image) {
                 const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
-                const targetDir = path.resolve(__dirname, 'public');
+                const baseDir = import.meta.dirname || process.cwd();
+                const targetDir = path.resolve(baseDir, 'public');
                 if (!fs.existsSync(targetDir)) {
                   fs.mkdirSync(targetDir, { recursive: true });
                 }
@@ -25,7 +26,7 @@ function savePortraitPlugin() {
                 fs.writeFileSync(targetPath, Buffer.from(base64Data, 'base64'));
 
                 // Also overwrite the studio portrait file so Vite builds pick it up directly
-                const assetPath = path.resolve(__dirname, 'src/assets/images/zaira_salvador_studio_portrait_1791900381465.jpg');
+                const assetPath = path.resolve(baseDir, 'src/assets/images/zaira_salvador_studio_portrait_1791900381465.jpg');
                 fs.writeFileSync(assetPath, Buffer.from(base64Data, 'base64'));
 
                 res.setHeader('Content-Type', 'application/json');
@@ -54,7 +55,7 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss(), savePortraitPlugin()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(import.meta.dirname || process.cwd(), '.'),
       },
     },
     server: {
